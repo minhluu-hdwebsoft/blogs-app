@@ -1,8 +1,17 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import "../styles/globals.css";
+import type { AppProps } from "next/app";
+import { ChakraProvider } from "@chakra-ui/react";
+import { AuthContextProvider } from "features/Auth/Context";
+import { defaultAuthProvider } from "features/Auth/authProvider";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <AuthContextProvider authProvider={defaultAuthProvider}>
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </AuthContextProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
