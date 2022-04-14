@@ -10,6 +10,7 @@ interface PaginationProps {
   nextItemUrl?: string;
   prevItemUrl?: string;
   pageBufferSize?: number;
+  rowPerPageOptions?: number[];
 }
 
 export function Pagination({
@@ -18,6 +19,7 @@ export function Pagination({
   pageSize = 1,
   pageBufferSize = 1,
   onChange,
+  rowPerPageOptions,
 }: PaginationProps) {
   const totalPage = Math.ceil(total / pageSize);
 
@@ -74,12 +76,16 @@ export function Pagination({
   }
 
   return (
-    <Box display="flex" justifyContent={"space-between"} w="full">
-      <Select defaultValue={pageSize} w={200} onChange={handlePageLimitSelected}>
-        <option value={10}>10 / Page</option>
-        <option value={20}>20 / Page</option>
-        <option value={30}>30 / Page</option>
-      </Select>
+    <Box display="flex" justifyContent={rowPerPageOptions ? "space-between" : "flex-end"} w="full">
+      {rowPerPageOptions && (
+        <Select defaultValue={pageSize} w={200} onChange={handlePageLimitSelected}>
+          {rowPerPageOptions.map((item) => (
+            <option key={item} value={item}>
+              {item} / Page
+            </option>
+          ))}
+        </Select>
+      )}
       <HStack>
         <IconButton
           isDisabled={currentPage === 1}

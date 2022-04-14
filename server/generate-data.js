@@ -62,6 +62,10 @@ function generateBlogs(users, categories, length) {
       created_at: Date.now(),
       updated_at: Date.now(),
       categories: blogCategories,
+      categoriesSearch: {
+        id: blogCategories.map((item) => item.id).join("-"),
+        name: blogCategories.map((item) => item.name).join("-"),
+      },
       author: users[userIndex],
     });
   }
@@ -73,7 +77,7 @@ function generateDb() {
   const categoryList = ["Javascript", "Redux", "ReactJS", "NextJS", "HTML", "CSS"];
   const users = generateUser(5);
   const categories = generateCategories(categoryList);
-  const blogs = generateBlogs(users, categories, 5);
+  const blogs = generateBlogs(users, categories, 20);
 
   // Prepare database
   const db = {

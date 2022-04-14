@@ -1,9 +1,11 @@
 import { Box, Container, Divider, Heading, VStack } from "@chakra-ui/react";
+import { Blog } from "api-sdk/api/blog/models";
 import { MainLayout } from "components/Layout";
 import BlogDetails from "features/Blog/List/BlogDetails";
-import { Blog, NextPageWithLayout } from "models";
+import { NextPageWithLayout } from "models";
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import React from "react";
+import useSWR from "swr";
 
 type Props = {
   blog: Blog;

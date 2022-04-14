@@ -14,26 +14,26 @@ export class CategoryApi {
     _order?: string,
   ): Promise<Pagination<Category>> {
     const params = { q, ...queryParams, _order, _page, _limit };
-    return this.client.get("/category", params);
+    return this.client.get("/categories", params);
   }
 
   public async create(data: CreateCategoryQueryParam): Promise<Category> {
-    const uri = `/category/`;
+    const uri = `/categories/`;
     return this.client.post<Category, CreateCategoryQueryParam>(uri, data);
   }
 
   public async get(categoryId: string): Promise<Category> {
-    const uri = `/category/${categoryId}/`;
+    const uri = `/categories/${categoryId}/`;
     return this.client.get<Category>(uri);
   }
 
   public async update(data: UpdateCategoryQueryParam): Promise<Category> {
-    const uri = `/category/${data.id}/`;
+    const uri = `/categories/${data.id}/`;
     return this.client.patch<Category, UpdateCategoryQueryParam>(uri, data);
   }
 
   public async delete(categoryId: string): Promise<void> {
-    const uri = `/category/${categoryId}/`;
+    const uri = `/categories/${categoryId}/`;
     return this.client.delete(uri);
   }
 }

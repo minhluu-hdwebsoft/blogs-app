@@ -7,64 +7,60 @@ import { BlogList } from "features/Blog/List/BlogList";
 import { useQueryParams } from "hooks/useQueryParams";
 import { FilterParams, NextPageWithLayout } from "models";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import React, { useState } from "react";
-import useSWR from "swr";
+import React, { ReactElement, useState } from "react";
+import useSWR, { SWRConfig, SWRConfiguration, unstable_serialize } from "swr";
+import { flattenObjToNestedObj } from "utils/helper";
 
 type Props = {
-  blogList: Blog[];
+  children?: ReactElement;
 };
 
-const BlogListPage: NextPageWithLayout<Props> = ({ blogList }: Props) => {
-  const {
-    query: { _page, _limit, _order, _sort },
-  } = useQueryParams();
-
-  const [filter, setFilter] = useState({
-    _page,
-    _limit,
-    _order,
-    _sort,
-  });
-
-  const { data } = useSWR(["/blog", filter], () =>
-    api.blog.list(undefined, undefined, filter._page, filter._limit, filter._order, filter._sort),
-  );
-  if (!data) return null;
-
-  const handlePaginationOnChange = ({ page, limit }: { page: number; limit: number }) => {
-    console.log("🚀 Minh =====>  ~ file: index.tsx ~ line 33 ~  page, limit", page, limit);
-    setFilter((prev) => ({
-      ...prev,
-      _page: page,
-      _limit: limit,
-    }));
-  };
-
+const BlogListPage = (props: Props) => {
   return (
     <Container maxW={"7xl"} p="12">
-      <BlogList blogList={data.data} />
-      <Pagination
-        onChange={handlePaginationOnChange}
-        currentPage={data.pagination?._page || 1}
-        total={data.pagination?._totalRows}
-        pageSize={data.pagination?._limit || 5}
-      />
+      <BlogList />
     </Container>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context: GetServerSidePropsContext) => {
-  const { _page, _limit, _order, _sort } = context.query as FilterParams<BlogQueryParam>;
-  const response = await api.blog.list(undefined, undefined, _page, _limit, _order, _sort);
-  const data = response.data;
+export const getServerSideProps: GetServerSideProps<SWRConfiguration> = async (context: GetServerSidePropsContext) => {
+  const { q, _limit, _order, _sort, _page, ...rest } = context.query as FilterParams<BlogQueryParam>;
+  const filter: FilterParams<BlogQueryParam> = {
+    q,
+    _limit,
+    _order,
+    _sort,
+    _page,
+    queryParams: flattenObjToNestedObj(rest),
+  };
+  const response = await api.blog.list(
+    filter.q,
+    filter.queryParams,
+    filter._page,
+    filter._limit,
+    filter._order,
+    filter._sort,
+  );
+  const categories = await api.category.list(undefined, undefined, 1, 200);
 
   return {
     props: {
-      blogList: data as Blog[],
+      fallback: {
+        [unstable_serialize(["/blogs", filter])]: response,
+        ["/categories"]: categories,
+      },
     },
   };
 };
 
-BlogListPage.Layout = MainLayout;
+const Page: NextPageWithLayout<SWRConfiguration> = ({ fallback }: SWRConfiguration) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <BlogListPage />
+    </SWRConfig>
+  );
+};
 
-export default BlogListPage;
+Page.Layout = MainLayout;
+
+export default Page;

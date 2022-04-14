@@ -1,3 +1,4 @@
+import { cleanObject, flattenObj } from "../../utils";
 import { ApiClient } from "../../http/client";
 import { Pagination } from "../../types";
 import { Blog, BlogQueryParam, CreateBlogQueryParam, UpdateBlogQueryParam } from "./models";
@@ -8,11 +9,11 @@ export class BlogApi {
     q?: string,
     queryParams?: BlogQueryParam,
     _page = 1,
-    _limit = 20,
+    _limit = 5,
     _sort?: string,
     _order?: string,
   ): Promise<Pagination<Blog>> {
-    const params = { q, ...queryParams, _order, _page, _limit };
+    const params = { q, ...cleanObject(flattenObj(queryParams)), _order, _page, _limit };
     return this.client.get("/blogs", params);
   }
 

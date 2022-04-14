@@ -1,5 +1,5 @@
-import { HStack, SpaceProps, Tag } from "@chakra-ui/react";
-import { Category } from "models";
+import { HStack, Skeleton, SpaceProps, Tag } from "@chakra-ui/react";
+import { Category } from "api-sdk/api/category/models";
 import React from "react";
 
 interface Props {
@@ -17,6 +17,16 @@ export const BlogTag = (props: Props) => {
           </Tag>
         );
       })}
+    </HStack>
+  );
+};
+
+export const BlogTagSkeleton = () => {
+  return (
+    <HStack spacing={2}>
+      <Skeleton w={100} height="20px" />
+      <Skeleton w={100} height="20px" />
+      <Skeleton w={100} height="20px" />
     </HStack>
   );
 };

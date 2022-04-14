@@ -6,6 +6,10 @@ export interface Blog {
   html: string;
   feature_image: string;
   categories: Category[];
+  categoriesSearch: {
+    id: string;
+    name: string;
+  };
   author: {
     id: string;
     name: string;
@@ -18,11 +22,15 @@ export interface Blog {
 }
 
 export interface BlogQueryParam {
-  author: {
-    id: string;
-    name: string;
-    email: string;
-    avatar: string;
+  categoriesSearch?: {
+    id?: string;
+    name?: string;
+  };
+  author?: {
+    id?: string;
+    name?: string;
+    email?: string;
+    avatar?: string;
   };
 }
 

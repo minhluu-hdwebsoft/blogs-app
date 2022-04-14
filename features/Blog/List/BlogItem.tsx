@@ -1,8 +1,8 @@
-import { Box, Heading, Image, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Heading, Image, Skeleton, SkeletonText, Text, useColorModeValue } from "@chakra-ui/react";
 import { Blog } from "api-sdk/api/blog/models";
 import { Link } from "components/Common";
 import React from "react";
-import { BlogAuthor, BlogTag } from "../components";
+import { BlogAuthor, BlogAuthorSkeleton, BlogTag, BlogTagSkeleton } from "../components";
 
 type Props = {
   blog: Blog;
@@ -62,10 +62,51 @@ export const BlogItem = ({ blog }: Props) => {
             {title}
           </Link>
         </Heading>
-        <Text as="p" noOfLines={5} marginTop="2" color={useColorModeValue("gray.700", "gray.200")} fontSize="lg">
+        <Text as="p" noOfLines={5} marginTop="2" color={useColorModeValue("gray.700", "gray.200")}>
           {html}
         </Text>
         <BlogAuthor avatar={author.avatar} name={author.name} date={new Date(updated_at || "")} />
+      </Box>
+    </Box>
+  );
+};
+
+export const BlogItemSkeleton = () => {
+  return (
+    <Box
+      marginTop={{ base: "1", sm: "5" }}
+      display="flex"
+      flexDirection={{ base: "column", sm: "row" }}
+      justifyContent="space-between"
+    >
+      <Box display="flex" flex="1" marginRight="3" position="relative" alignItems="center">
+        <Skeleton
+          borderRadius="lg"
+          width={{ base: "100%", sm: "85%" }}
+          zIndex="2"
+          marginLeft={{ base: "0", sm: "5%" }}
+          height={280}
+          marginTop="5%"
+        />
+        <Box zIndex="1" width="100%" position="absolute" height="100%">
+          <Box
+            bgGradient={useColorModeValue(
+              "radial(orange.600 1px, transparent 1px)",
+              "radial(orange.300 1px, transparent 1px)",
+            )}
+            backgroundSize="20px 20px"
+            opacity="0.4"
+            height="100%"
+          />
+        </Box>
+      </Box>
+      <Box display="flex" flex="1" flexDirection="column" justifyContent="center" marginTop={{ base: "3", sm: "0" }}>
+        <BlogTagSkeleton />
+        <Skeleton marginTop="2">
+          <Heading>{"Blog Heading Title"}</Heading>
+        </Skeleton>
+        <SkeletonText noOfLines={6} marginTop="3" color={useColorModeValue("gray.700", "gray.200")} />
+        <BlogAuthorSkeleton />
       </Box>
     </Box>
   );

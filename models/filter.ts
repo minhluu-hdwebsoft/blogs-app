@@ -6,4 +6,7 @@ export interface FilterParams<T> {
   _page?: number;
   _order?: Order;
   _sort?: string;
+  queryParams?: T;
+
+  [key: string]: string | unknown;
 }
