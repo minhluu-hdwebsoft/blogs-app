@@ -3,12 +3,18 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthContextProvider } from "features/Auth/Context";
 import { defaultAuthProvider } from "features/Auth/authProvider";
+import { AppPropsWithLayout } from "models";
+import { EmptyLayout } from "components/Layout";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const Layout = Component.Layout ?? EmptyLayout;
+
   return (
     <AuthContextProvider authProvider={defaultAuthProvider}>
       <ChakraProvider>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </ChakraProvider>
     </AuthContextProvider>
   );

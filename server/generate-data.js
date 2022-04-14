@@ -1,62 +1,85 @@
 const { faker } = require("@faker-js/faker");
 const fs = require("fs");
 
-function generateCategorys(arr) {
-  const categorys = [];
+const chooseRandom = (arr, num = 1) => {
+  const res = [];
+  for (let i = 0; i < num; ) {
+    const random = Math.floor(Math.random() * arr.length);
+    if (res.indexOf(arr[random]) !== -1) {
+      continue;
+    }
+    res.push(arr[random]);
+    i++;
+  }
+  return res;
+};
+
+function generateCategories(arr) {
+  const categories = [];
 
   arr.forEach((item) =>
-    categorys.push({
+    categories.push({
       id: faker.datatype.uuid(),
       name: item,
+      is_deleted: false,
+      created_at: Date.now(),
+      updated_at: Date.now(),
     }),
   );
 
-  return categorys;
+  return categories;
 }
 
-function generateBlogs(categorys, length) {
+function generateUser(length) {
+  const users = [];
+
+  for (let i = 1; i <= length; i++) {
+    users.push({
+      name: `Admin${i}`,
+      email: `admin${i}@admin.com`,
+      password: "$2a$10$SbLLgPSv6GI5sUjxHR5v..AXXludDzLLRRaNRyY6d7TWmmZ6XLhxm",
+      avatar: faker.image.avatar(),
+      createdAt: Date.now(),
+      id: i,
+    });
+  }
+
+  return users;
+}
+
+function generateBlogs(users, categories, length) {
   const blogs = [];
 
-  categorys.forEach((category) => {
-    for (let i = 0; i < length; i++) {
-      blogs.push({
-        id: faker.datatype.uuid(),
-        title: faker.lorem.sentence(),
-        html: faker.lorem.paragraphs(5, "<br/>\n"),
-        is_deleted: false,
-        created_at: Date.now(),
-        updated_at: Date.now(),
-        categorys: [category],
-        author: {
-          name: "Admin",
-          email: "admin@admin.com",
-          id: 1,
-        },
-      });
-    }
-  });
+  for (let i = 0; i < length; i++) {
+    const userIndex = Math.floor(Math.random() * users.length);
+    const blogCategories = chooseRandom(categories, Math.floor(Math.random() * categories.length));
+
+    blogs.push({
+      id: faker.datatype.uuid(),
+      title: faker.lorem.sentence(),
+      html: faker.lorem.paragraphs(5),
+      is_deleted: false,
+      created_at: Date.now(),
+      updated_at: Date.now(),
+      categories: blogCategories,
+      author: users[userIndex],
+    });
+  }
 
   return blogs;
 }
 
 function generateDb() {
   const categoryList = ["Javascript", "Redux", "ReactJS", "NextJS", "HTML", "CSS"];
-  const categorys = generateCategorys(categoryList);
-  const blogs = generateBlogs(categorys, 5);
+  const users = generateUser(5);
+  const categories = generateCategories(categoryList);
+  const blogs = generateBlogs(users, categories, 5);
 
   // Prepare database
   const db = {
-    users: [
-      {
-        name: "Admin",
-        email: "admin@admin.com",
-        password: "$2a$10$SbLLgPSv6GI5sUjxHR5v..AXXludDzLLRRaNRyY6d7TWmmZ6XLhxm",
-        createdAt: 1649835434093,
-        id: 1,
-      },
-    ], //For author
-    categorys,
-    blogs: blogs,
+    users, //For author
+    categories,
+    blogs,
   };
 
   fs.writeFile("./server/db.json", JSON.stringify(db), () => {

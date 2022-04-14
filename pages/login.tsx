@@ -1,11 +1,12 @@
 import { Box, Flex, Heading, Stack, useColorModeValue } from "@chakra-ui/react";
 import SigninForm from "features/Auth/Form/SigninForm";
+import { NextPageWithLayout } from "models";
 import Link from "next/link";
 import React from "react";
 
 type Props = {};
 
-const LoginPage = (props: Props) => {
+const LoginPage: NextPageWithLayout<Props> = (props: Props) => {
   return (
     <Flex minH={"100vh"} align={"center"} justify={"center"} bg={useColorModeValue("gray.50", "gray.800")}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
