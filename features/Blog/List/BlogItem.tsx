@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const BlogItem = ({ blog }: Props) => {
-  const { id, title, categories, author, updated_at, html } = blog;
+  const { id, title, categories, author, created_at, html } = blog;
 
   return (
     <Box
@@ -65,7 +65,7 @@ export const BlogItem = ({ blog }: Props) => {
         <Text as="p" noOfLines={5} marginTop="2" color={useColorModeValue("gray.700", "gray.200")}>
           {html}
         </Text>
-        <BlogAuthor avatar={author.avatar} name={author.name} date={new Date(updated_at || "")} />
+        <BlogAuthor avatar={author.avatar} name={author.name} date={new Date(created_at || "")} />
       </Box>
     </Box>
   );

@@ -1,14 +1,18 @@
-import { Heading, VStack, Text, Image } from "@chakra-ui/react";
-import { Blog } from "api-sdk/api/blog/models";
+import { Heading, Image, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { BlogAuthor, BlogTag } from "../components";
+import useGetBlogById from "../hooks/useGetBlogById";
 
 type Props = {
-  blog: Blog;
+  blogId: string;
 };
 
-const BlogDetails = ({ blog }: Props) => {
-  const { id, title, categories, author, updated_at, html } = blog;
+const BlogDetails = ({ blogId }: Props) => {
+  const { data } = useGetBlogById(blogId as string);
+
+  if (!data) return null;
+
+  const { title, categories, author, created_at, html } = data;
 
   return (
     <div>
@@ -24,25 +28,10 @@ const BlogDetails = ({ blog }: Props) => {
           objectFit="cover"
         />
         <BlogTag categories={categories} />
-        <Heading as="h2">What we write about</Heading>
-        <BlogAuthor avatar={author.avatar} name={author.name} date={new Date(Number(updated_at) || "")} />
+        <Heading as="h2">{title}</Heading>
+        <BlogAuthor avatar={author.avatar} name={author.name} date={new Date(created_at || "")} />
         <Text as="p" fontSize="lg">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum quam arcu, eu tempus tortor
-          molestie at. Vestibulum pretium condimentum dignissim. Vestibulum ultrices vitae nisi sed imperdiet. Mauris
-          quis erat consequat, commodo massa quis, feugiat sapien. Suspendisse placerat vulputate posuere. Curabitur
-          neque tortor, mattis nec lacus non, placerat congue elit.
-        </Text>
-        <Text as="p" fontSize="lg">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum quam arcu, eu tempus tortor
-          molestie at. Vestibulum pretium condimentum dignissim. Vestibulum ultrices vitae nisi sed imperdiet. Mauris
-          quis erat consequat, commodo massa quis, feugiat sapien. Suspendisse placerat vulputate posuere. Curabitur
-          neque tortor, mattis nec lacus non, placerat congue elit.
-        </Text>
-        <Text as="p" fontSize="lg">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec condimentum quam arcu, eu tempus tortor
-          molestie at. Vestibulum pretium condimentum dignissim. Vestibulum ultrices vitae nisi sed imperdiet. Mauris
-          quis erat consequat, commodo massa quis, feugiat sapien. Suspendisse placerat vulputate posuere. Curabitur
-          neque tortor, mattis nec lacus non, placerat congue elit.
+          {html}
         </Text>
       </VStack>
     </div>

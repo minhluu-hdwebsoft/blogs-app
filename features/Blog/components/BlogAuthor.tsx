@@ -1,4 +1,4 @@
-import { HStack, Image, SkeletonCircle, SkeletonText, Text } from "@chakra-ui/react";
+import { HStack, Img, SkeletonCircle, SkeletonText, Text } from "@chakra-ui/react";
 import React from "react";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 export const BlogAuthor = ({ name, date, avatar }: Props) => {
   return (
     <HStack marginTop="2" spacing="2" display="flex" alignItems="center">
-      <Image borderRadius="full" boxSize="40px" src={avatar} alt={`Avatar of ${name}`} />
+      <Img borderRadius="full" boxSize="40px" src={avatar} alt={`Avatar of ${name}`} />
       <Text fontWeight="medium">{name}</Text>
       <Text>—</Text>
       <Text>{date.toDateString()}</Text>

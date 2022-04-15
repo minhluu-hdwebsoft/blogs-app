@@ -31,6 +31,7 @@ export function SearchInput({ delay = 500, inputProps, onChange, defaultValue, r
         <FiSearch />
       </InputLeftElement>
       <Input
+        focusBorderColor={"orange.400"}
         type="text"
         placeholder="Search..."
         defaultValue={defaultValue}

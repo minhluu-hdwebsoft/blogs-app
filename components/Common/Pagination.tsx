@@ -48,6 +48,10 @@ export function Pagination({
           key={pageIndex}
           aria-label={`page-${pageIndex}`}
           isActive={isActive}
+          _active={{
+            color: "white",
+            background: "orange.400",
+          }}
           icon={<p>{pageIndex}</p>}
         />,
       );

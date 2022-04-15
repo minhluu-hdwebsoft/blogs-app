@@ -13,7 +13,7 @@ export class BlogApi {
     _sort?: string,
     _order?: string,
   ): Promise<Pagination<Blog>> {
-    const params = { q, ...cleanObject(flattenObj(queryParams)), _order, _page, _limit };
+    const params = { q, ...cleanObject(flattenObj(queryParams)), _order, _page, _limit, _sort };
     return this.client.get("/blogs", params);
   }
 

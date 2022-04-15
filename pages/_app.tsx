@@ -1,10 +1,10 @@
 import "../styles/globals.css";
-import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthContextProvider } from "features/Auth/Context";
 import { defaultAuthProvider } from "features/Auth/authProvider";
 import { AppPropsWithLayout } from "models";
 import { EmptyLayout } from "components/Layout";
+import { ScrollToTop } from "components/Common/ScrollToTop";
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const Layout = Component.Layout ?? EmptyLayout;
@@ -15,6 +15,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <Layout>
           <Component {...pageProps} />
         </Layout>
+        <ScrollToTop />
       </ChakraProvider>
     </AuthContextProvider>
   );

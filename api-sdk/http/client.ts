@@ -79,7 +79,7 @@ export class ApiClient {
   private error(e: AxiosError): ApiError {
     if (e.response && e.response.data) {
       const errorCode = e.response.data.code || "unknown";
-      const message = e.response.data.error_detail || e.response.data.message || e.message;
+      const message = e.response.data.message || e.message;
       return new ApiError(message, errorCode);
     }
     return this.handleUnknownError(e);

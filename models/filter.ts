@@ -1,4 +1,7 @@
-export type Order = "asc" | "desc";
+export enum Order {
+  ASC = "asc",
+  DESC = "desc",
+}
 
 export interface FilterParams<T> {
   q?: string;

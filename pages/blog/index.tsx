@@ -38,8 +38,8 @@ export const getServerSideProps: GetServerSideProps<SWRConfiguration> = async (c
     filter.queryParams,
     filter._page,
     filter._limit,
-    filter._order,
     filter._sort,
+    filter._order,
   );
   const categories = await api.category.list(undefined, undefined, 1, 200);
 

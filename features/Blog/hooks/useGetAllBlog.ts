@@ -8,15 +8,19 @@ import useSWR from "swr";
 export const useGetAllBlog = () => {
   const { query, updateParams } = useQueryParams<BlogQueryParam>();
 
+  const [totalRows, setTotalRows] = useState(1);
   const [filter, setFilter] = useState<FilterParams<BlogQueryParam>>({
     ...query,
   });
 
   const { data } = useSWR(
     ["/blogs", filter],
-    () => api.blog.list(filter.q, filter.queryParams, filter._page, filter._limit, filter._order, filter._sort),
+    () => api.blog.list(filter.q, filter.queryParams, filter._page, filter._limit, filter._sort, filter._order),
     {
       focusThrottleInterval: 10000,
+      onSuccess: (data) => {
+        setTotalRows(data.pagination?._totalRows || 1);
+      },
     },
   );
 
@@ -27,6 +31,7 @@ export const useGetAllBlog = () => {
   return {
     blogList: data?.data,
     pagination: data?.pagination,
+    totalRows,
     isLoading: !Boolean(data?.data),
     filter,
     setFilter,

@@ -1,57 +1,84 @@
 import { Box, Container, Divider, Heading, VStack } from "@chakra-ui/react";
+import api from "api";
 import { Blog } from "api-sdk/api/blog/models";
 import { MainLayout } from "components/Layout";
 import BlogDetails from "features/Blog/List/BlogDetails";
-import { NextPageWithLayout } from "models";
+import CommentList from "features/Comment/List/CommentList";
+import { NextPageWithLayout, Order } from "models";
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
+import { useRouter } from "next/router";
 import React from "react";
-import useSWR from "swr";
+import useSWR, { SWRConfig, SWRConfiguration } from "swr";
 
-type Props = {
-  blog: Blog;
-};
-
-const PostDetailsPage: NextPageWithLayout<Props> = ({ blog }: Props) => {
-  if (!blog) return null;
+const PostDetailsPage: NextPageWithLayout = () => {
+  const {
+    query: { blogId },
+  } = useRouter();
 
   return (
     <Container maxW={"7xl"} p="12">
       <VStack spacing={5} alignItems="flex-start">
-        <BlogDetails blog={blog} />
+        <BlogDetails blogId={blogId as string} />
         <Divider />
-        <Box>
+        <Box width={"full"}>
           <Heading as="h2">Comments</Heading>
+          <CommentList blogId={blogId as string} />
         </Box>
       </VStack>
     </Container>
   );
 };
 
-PostDetailsPage.Layout = MainLayout;
-
-export const getStaticProps: GetStaticProps<Props> = async (context: GetStaticPropsContext) => {
+export const getStaticProps: GetStaticProps<SWRConfiguration> = async (context: GetStaticPropsContext) => {
   const { params } = context;
 
-  if (!params) return { notFound: true };
+  if (!params || !params.blogId) return { notFound: true };
 
-  const response = await fetch(`http://localhost:5000/blogs/${params.blogId}`);
-  const data = await response.json();
+  try {
+    const blog = await api.blog.get(params.blogId as string);
+    const comments = await api.comment.list(
+      undefined,
+      {
+        blogId: params.blogId as string,
+      },
+      1,
+      10,
+      "created_at",
+      Order.DESC,
+    );
 
-  return {
-    props: {
-      blog: data,
-    },
-  };
+    return {
+      props: {
+        fallback: {
+          [`/blog/${params.blogId}`]: blog,
+          [`/blog/${params.blogId}/comment`]: comments,
+        },
+      },
+      revalidate: 10,
+    };
+  } catch (error) {
+    return { notFound: true };
+  }
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const response = await fetch("http://localhost:5000/blogs?_page=1&limit=30");
-  const data = await response.json();
+  const response = await api.blog.list(undefined, undefined, 1, 30);
+  const data = response.data;
 
   return {
-    paths: data.data.map((item: Blog) => ({ params: { blogId: item.id } })),
+    paths: data.map((item: Blog) => ({ params: { blogId: item.id } })),
     fallback: "blocking",
   };
 };
 
-export default PostDetailsPage;
+const Page: NextPageWithLayout<SWRConfiguration> = ({ fallback }: SWRConfiguration) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <PostDetailsPage />
+    </SWRConfig>
+  );
+};
+
+Page.Layout = MainLayout;
+
+export default Page;

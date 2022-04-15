@@ -1,6 +1,7 @@
 const queryString = require("query-string");
 const auth = require("json-server-auth");
 const jsonServer = require("json-server");
+const { faker } = require("@faker-js/faker");
 
 const server = jsonServer.create();
 const router = jsonServer.router("./server/db.json");
@@ -11,13 +12,14 @@ server.use(middlewares);
 
 //Custom router
 router.render = (req, res) => {
+  let data = res.locals.data;
   const header = res.getHeaders();
   const totalCount = header["x-total-count"];
 
   if (req.method === "GET" && totalCount) {
     const queryParams = queryString.parse(req._parsedOriginalUrl.query);
 
-    const response = {
+    data = {
       data: res.locals.data,
       pagination: {
         _page: Number.parseInt(queryParams._page) || 1,
@@ -25,11 +27,16 @@ router.render = (req, res) => {
         _totalRows: Number.parseInt(totalCount),
       },
     };
-
-    return res.jsonp(response);
   }
 
-  return res.jsonp(res.locals.data);
+  if (res.statusCode >= 400) {
+    data = {
+      code: res.statusCode,
+      message: "Error",
+    };
+  }
+
+  return res.jsonp(data);
 };
 
 // Create route Permisssions
@@ -44,7 +51,14 @@ server.use(jsonServer.bodyParser);
 server.use((req, res, next) => {
   switch (req.method) {
     case "POST": {
-      req.body.createdAt = Date.now();
+      req.body.id = faker.datatype.uuid();
+      req.body.created_at = Date.now();
+      req.body.updated_at = Date.now();
+      req.body.is_deleted = false;
+      break;
+    }
+    case "PATCH": {
+      req.body.created_at = Date.now();
       break;
     }
     default:
