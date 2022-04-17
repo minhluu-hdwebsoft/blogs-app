@@ -24,33 +24,39 @@ const BlogListPage = (props: Props) => {
 };
 
 export const getServerSideProps: GetServerSideProps<SWRConfiguration> = async (context: GetServerSidePropsContext) => {
-  const { q, _limit, _order, _sort, _page, ...rest } = context.query as FilterParams<BlogQueryParam>;
-  const filter: FilterParams<BlogQueryParam> = {
-    q,
-    _limit,
-    _order,
-    _sort,
-    _page,
-    queryParams: flattenObjToNestedObj(rest),
-  };
-  const response = await api.blog.list(
-    filter.q,
-    filter.queryParams,
-    filter._page,
-    filter._limit,
-    filter._sort,
-    filter._order,
-  );
-  const categories = await api.category.list(undefined, undefined, 1, 200);
+  try {
+    const { q, _limit, _order, _sort, _page, ...rest } = context.query as FilterParams<BlogQueryParam>;
+    const filter: FilterParams<BlogQueryParam> = {
+      q,
+      _limit,
+      _order,
+      _sort,
+      _page,
+      queryParams: flattenObjToNestedObj(rest),
+    };
+    const response = await api.blog.list(
+      filter.q,
+      filter.queryParams,
+      filter._page,
+      filter._limit,
+      filter._sort,
+      filter._order,
+    );
+    const categories = await api.category.list(undefined, undefined, 1, 200);
 
-  return {
-    props: {
-      fallback: {
-        [unstable_serialize(["/blogs", filter])]: response,
-        ["/categories"]: categories,
+    return {
+      props: {
+        fallback: {
+          [unstable_serialize(["/blogs", filter])]: response,
+          ["/categories"]: categories,
+        },
       },
-    },
-  };
+    };
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
 };
 
 const Page: NextPageWithLayout<SWRConfiguration> = ({ fallback }: SWRConfiguration) => {

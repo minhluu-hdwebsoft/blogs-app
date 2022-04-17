@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Avatar, Box, VStack, Text, HStack, Image, Textarea, Button } from "@chakra-ui/react";
 import { useCreate } from "../hooks";
+import { useGetCommentInfiniteByBlog } from "../hooks/useGetCommentInfinitebyBlog";
 
 type Props = {
   blogId: string;
@@ -12,9 +13,7 @@ const CreateComment = ({ blogId }: Props) => {
 
   const handleCommentPost = () => {
     const value = commentContent;
-
     if (!value) return;
-
     create(value);
   };
 

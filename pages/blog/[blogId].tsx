@@ -3,12 +3,13 @@ import api from "api";
 import { Blog } from "api-sdk/api/blog/models";
 import { MainLayout } from "components/Layout";
 import BlogDetails from "features/Blog/List/BlogDetails";
+import { PAGE_SIZE } from "features/Comment/config";
 import CommentList from "features/Comment/List/CommentList";
 import { NextPageWithLayout, Order } from "models";
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import useSWR, { SWRConfig, SWRConfiguration } from "swr";
+import useSWR, { SWRConfig, SWRConfiguration, unstable_serialize } from "swr";
 
 const PostDetailsPage: NextPageWithLayout = () => {
   const {
@@ -30,6 +31,7 @@ const PostDetailsPage: NextPageWithLayout = () => {
 };
 
 export const getStaticProps: GetStaticProps<SWRConfiguration> = async (context: GetStaticPropsContext) => {
+  const COMMENT_PAGE = 1;
   const { params } = context;
 
   if (!params || !params.blogId) return { notFound: true };
@@ -41,8 +43,8 @@ export const getStaticProps: GetStaticProps<SWRConfiguration> = async (context: 
       {
         blogId: params.blogId as string,
       },
-      1,
-      10,
+      COMMENT_PAGE,
+      PAGE_SIZE,
       "created_at",
       Order.DESC,
     );
@@ -51,7 +53,7 @@ export const getStaticProps: GetStaticProps<SWRConfiguration> = async (context: 
       props: {
         fallback: {
           [`/blog/${params.blogId}`]: blog,
-          [`/blog/${params.blogId}/comment`]: comments,
+          [unstable_serialize([`/blog/${params.blogId}/comment`, COMMENT_PAGE])]: comments,
         },
       },
       revalidate: 10,
@@ -62,13 +64,20 @@ export const getStaticProps: GetStaticProps<SWRConfiguration> = async (context: 
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const response = await api.blog.list(undefined, undefined, 1, 30);
-  const data = response.data;
+  try {
+    const response = await api.blog.list(undefined, undefined, 1, 30);
+    const data = response.data;
 
-  return {
-    paths: data.map((item: Blog) => ({ params: { blogId: item.id } })),
-    fallback: "blocking",
-  };
+    return {
+      paths: data.map((item: Blog) => ({ params: { blogId: item.id } })),
+      fallback: "blocking",
+    };
+  } catch (error) {
+    return {
+      paths: [],
+      fallback: false,
+    };
+  }
 };
 
 const Page: NextPageWithLayout<SWRConfiguration> = ({ fallback }: SWRConfiguration) => {
