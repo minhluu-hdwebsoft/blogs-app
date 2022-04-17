@@ -30,3 +30,11 @@ export const cleanObject = <T>(obj: T) => {
 
   return resultObj;
 };
+
+export const tryParseJson = (jsonString: string): unknown => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    return jsonString;
+  }
+};

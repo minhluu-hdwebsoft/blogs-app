@@ -24,4 +24,7 @@ export enum ArrayFormat {
 
 export interface ApiConfiguration {
   baseUrl: string;
+  session: SessionStorage;
+  authSessionKey: string;
+  authType?: AuthType;
 }
