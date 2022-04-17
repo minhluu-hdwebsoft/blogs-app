@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthContextProvider } from "features/Auth/Context";
-import { defaultAuthProvider } from "features/Auth/authProvider";
+import defaultAuthProvider from "features/Auth/defaultAuthProvider";
 import { AppPropsWithLayout } from "models";
 import { EmptyLayout } from "components/Layout";
 import { ScrollToTop } from "components/Common/ScrollToTop";

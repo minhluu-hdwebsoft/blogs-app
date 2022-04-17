@@ -1,5 +1,5 @@
-import { ApiClient, Authenticator, AuthToken } from '../../../http/client';
-import { UserRegisterParams, AuthorizationHeaders, SocialLoginParams, ResetConfirmParams } from '../models';
+import { ApiClient, Authenticator, AuthToken } from "../../../http/client";
+import { UserRegisterParams, AuthorizationHeaders, ResetConfirmParams } from "../models";
 
 export interface AuthAdapter extends Authenticator {
   login(username: string, password: string): Promise<unknown>;
@@ -12,36 +12,23 @@ export interface AuthAdapter extends Authenticator {
   getAuthorizationHeaders(): Promise<AuthorizationHeaders>;
 }
 
-export interface SocialAuth {
-  facebookLogin(params: SocialLoginParams): Promise<unknown>;
-  connectFacebook(params: SocialLoginParams): Promise<unknown>;
-  googleLogin(params: SocialLoginParams): Promise<unknown>;
-  twitterLogin(params: SocialLoginParams): Promise<unknown>;
-  linkedInLogin(params: SocialLoginParams): Promise<unknown>;
-}
-
 export interface ChangePassword {
   changePassword(oldPassword: string, newPassword: string): Promise<unknown>;
   resetPassword(email: string): Promise<unknown>;
   resetPasswordConfirm(params: ResetConfirmParams): Promise<ResetConfirmParams>;
 }
 
-export abstract class AbstractAuthAdapter implements AuthAdapter, ChangePassword, SocialAuth {
+export abstract class AbstractAuthAdapter implements AuthAdapter, ChangePassword {
   public constructor(public readonly client: ApiClient) {}
 
   public abstract login(username: string, password: string): Promise<unknown>;
   public abstract getAuthToken(): Promise<AuthToken | null>;
   public abstract refreshToken(): Promise<void>;
-  public abstract facebookLogin(params: SocialLoginParams): Promise<unknown>;
-  public abstract connectFacebook(params: SocialLoginParams): Promise<unknown>;
-  public abstract googleLogin(params: SocialLoginParams): Promise<unknown>;
-  public abstract twitterLogin(params: SocialLoginParams): Promise<unknown>;
-  public abstract linkedInLogin(params: SocialLoginParams): Promise<unknown>;
 
   public async getAuthHeader(): Promise<string> {
     const authToken = await this.getAuthToken();
     if (!authToken || !authToken.access_token) {
-      return '';
+      return "";
     }
     if (authToken.token_type) {
       return `${authToken.token_type} ${authToken.access_token}`;
@@ -118,7 +105,7 @@ export abstract class AbstractAuthAdapter implements AuthAdapter, ChangePassword
   }
 
   public async register(params: UserRegisterParams): Promise<unknown> {
-    const r = await this.client.post('/auth/registration/', params, {}, false);
+    const r = await this.client.post("/auth/registration/", params, {}, false);
     await this.setAuthToken(r);
     return r;
   }

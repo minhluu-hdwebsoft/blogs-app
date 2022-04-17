@@ -16,9 +16,7 @@ export interface UserRegisterParams {
 }
 
 export interface JwtToken {
-  refresh: string;
-  access: string;
-  enabled_2fa: boolean;
+  accessToken: string;
 }
 
 export interface ApiKey {

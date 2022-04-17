@@ -5,6 +5,7 @@ import { AbstractAuthAdapter } from "./auth/adapter/adapter";
 import { BlogApi } from "./blog";
 import { CategoryApi } from "./category";
 import { CommentApi } from "./comment";
+import { UserApi } from "./user";
 
 export const createApiClient = (config: ApiConfiguration): ApiClient => {
   const client = new ApiClient(config);
@@ -12,6 +13,7 @@ export const createApiClient = (config: ApiConfiguration): ApiClient => {
 };
 
 export class Api {
+  public readonly user: UserApi;
   public readonly auth: AbstractAuthAdapter;
   public readonly category: CategoryApi;
   public readonly blog: BlogApi;
@@ -20,6 +22,7 @@ export class Api {
     this.auth = authFactory(this.client);
 
     this.client.setAuthenticator(this.auth);
+    this.user = new UserApi(this.client);
     this.category = new CategoryApi(client);
     this.blog = new BlogApi(client);
     this.comment = new CommentApi(client);

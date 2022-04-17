@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Avatar, Box, VStack, Text, HStack, Image, Textarea, Button } from "@chakra-ui/react";
 import { useCreate } from "../hooks";
 import { useGetCommentInfiniteByBlog } from "../hooks/useGetCommentInfinitebyBlog";
+import { useAuth } from "features/Auth/Context";
 
 type Props = {
   blogId: string;
@@ -9,6 +10,7 @@ type Props = {
 
 const CreateComment = ({ blogId }: Props) => {
   const { create, isLoading } = useCreate(blogId);
+  const { identity } = useAuth();
   const [commentContent, setCommentContent] = useState<string>("");
 
   const handleCommentPost = () => {
@@ -20,7 +22,7 @@ const CreateComment = ({ blogId }: Props) => {
   return (
     <VStack spacing={3} alignItems={"end"} border={"1px solid #d6d6d7"} borderRadius="md" w={"full"} padding={5}>
       <HStack width={"full"} alignItems={"start"}>
-        <Avatar />
+        <Avatar src={identity?.avatar} />
         <Textarea
           value={commentContent}
           isDisabled={isLoading}

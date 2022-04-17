@@ -39,7 +39,6 @@ const useAuthContextProvider = (authProvider: AuthProvider): AuthContextValues =
     (async () => {
       try {
         setIsLoading(true);
-        await authProvider.refreshToken();
         const identity = await authProvider.getIdentity();
         identityRef.current = identity;
         isAuthenticatedRef.current = Boolean(identity);

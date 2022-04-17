@@ -4,7 +4,7 @@ export interface Comment {
   id: string;
   blogId: string;
   content: string;
-  author: {
+  author?: {
     id: string;
     name: string;
     email: string;
@@ -26,4 +26,4 @@ export interface CommentQueryParam {
 }
 
 export type UpdateCommentQueryParam = Omit<Comment, "is_deleted" | "created_at" | "updated_at">;
-export type CreateCommentQueryParam = Omit<Comment, "id" | "is_deleted" | "created_at" | "updated_at" | "author">;
+export type CreateCommentQueryParam = Omit<Comment, "id" | "is_deleted" | "created_at" | "updated_at">;

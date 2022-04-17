@@ -15,13 +15,12 @@ export class JwtAuth extends AbstractAuthAdapter {
     const config = this.client.getApiConfig();
     const jwtJson: string = await config.session.get(config.authSessionKey);
     const jtwToken = utils.tryParseJson(jwtJson) as JwtToken;
-    if (!jtwToken || !jtwToken.access) {
+    if (!jtwToken || !jtwToken.accessToken) {
       return null;
     }
     return {
       token_type: "Bearer",
-      access_token: jtwToken.access,
-      refresh_token: jtwToken.refresh,
+      access_token: jtwToken.accessToken,
     };
   }
 

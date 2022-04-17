@@ -1,25 +1,23 @@
-import React from "react";
-
+import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Flex,
-  Text,
-  IconButton,
   Button,
-  Stack,
   Collapse,
-  Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  useColorModeValue,
+  Flex,
+  IconButton,
+  Stack,
+  Text,
   useBreakpointValue,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Link } from "components/Common";
+import { useAuth } from "features/Auth/Context";
+import React from "react";
+import AuthHeader from "./AuthHeader";
 
 export function Header() {
+  const { isAuthenticated } = useAuth();
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -57,26 +55,29 @@ export function Header() {
             <DesktopNav />
           </Flex>
         </Flex>
-
-        <Stack flex={{ base: 1, md: 0 }} justify={"flex-end"} direction={"row"} spacing={6}>
-          <Link href={"/login"} linkProps={{ as: Button, fontSize: "sm", fontWeight: 400, variant: "link" }}>
-            Sign In
-          </Link>
-          <Link href={"/register"}>
-            <Button
-              display={{ base: "none", md: "inline-flex" }}
-              fontSize={"sm"}
-              fontWeight={600}
-              color={"white"}
-              bg={"orange.400"}
-              _hover={{
-                bg: "orange.300",
-              }}
-            >
-              Sign Up
-            </Button>
-          </Link>
-        </Stack>
+        {isAuthenticated ? (
+          <AuthHeader />
+        ) : (
+          <Stack flex={{ base: 1, md: 0 }} justify={"flex-end"} direction={"row"} spacing={6}>
+            <Link href={"/login"} linkProps={{ as: Button, fontSize: "sm", fontWeight: 400, variant: "link" }}>
+              Sign In
+            </Link>
+            <Link href={"/register"}>
+              <Button
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"orange.400"}
+                _hover={{
+                  bg: "orange.300",
+                }}
+              >
+                Sign Up
+              </Button>
+            </Link>
+          </Stack>
+        )}
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>

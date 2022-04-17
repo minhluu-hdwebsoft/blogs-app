@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "server": "node ./server/index.js",
+    "server": "nodemon ./server/index.js",
     "generate-data": "node ./server/generate-data.js"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
     "js-cookie": "^3.0.1",
     "json-server": "^0.17.0",
     "json-server-auth": "^2.1.0",
+    "jsonwebtoken": "^8.5.1",
     "next": "12.1.5",
     "nodemon": "^2.0.15",
     "query-string": "^7.1.1",

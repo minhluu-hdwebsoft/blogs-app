@@ -5,9 +5,11 @@ import { unstable_serialize } from "swr/infinite";
 import { useSWRConfig } from "swr";
 import { useGetAllCommentByBlog } from "./useGetAllCommentByBlog";
 import { Comment } from "api-sdk/api/comment/models";
+import { useAuth } from "features/Auth/Context";
 
 export const useCreate = (blogId: string) => {
   const { isLoading, toggleLoading } = useLoading(false);
+  const { identity } = useAuth();
   const { mutate } = useSWRConfig();
 
   const create = async (content: string) => {
@@ -20,6 +22,14 @@ export const useCreate = (blogId: string) => {
           const comment: Comment = await api.comment.create({
             blogId,
             content,
+            author: identity
+              ? {
+                  id: identity.id,
+                  name: identity.name,
+                  avatar: identity.avatar,
+                  email: identity.email,
+                }
+              : undefined,
           });
 
           const newData = [...data];
@@ -28,7 +38,6 @@ export const useCreate = (blogId: string) => {
             data: comments ? [comment, ...comments] : comments,
           };
 
-          console.log("🚀 Minh =====>  ~ file: useCreate.ts ~ line 27 ~ newData", newData);
           return newData;
         },
         {

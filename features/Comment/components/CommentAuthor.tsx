@@ -4,7 +4,7 @@ import React from "react";
 type Props = {
   date: Date;
   avatar?: string;
-  name: string;
+  name?: string;
 };
 
 export const CommentAuthor = ({ name, avatar, date }: Props) => {

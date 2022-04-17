@@ -1,3 +1,5 @@
+const JWT_SECRET_KEY = require("json-server-auth/dist/constants").JWT_SECRET_KEY;
+const jwt = require("jsonwebtoken");
 const queryString = require("query-string");
 const auth = require("json-server-auth");
 const jsonServer = require("json-server");
@@ -66,6 +68,23 @@ server.use((req, res, next) => {
   }
   // Continue to JSON Server router
   next();
+});
+
+server.get("/users/me", auth, (req, res, next) => {
+  const token = req.header("Authorization") ? req.header("Authorization").replace("Bearer ", "") : null;
+  if (token) {
+    try {
+      const data = jwt.verify(token, JWT_SECRET_KEY);
+
+      const { db } = req.app;
+      let user = db.get("users").find({ email: data.email }).value();
+      res.json(user);
+    } catch (error) {
+      res.json(error);
+    }
+  } else {
+    res.status(401).json({ message: "User not authorized" });
+  }
 });
 
 // /!\ Bind the router db to the app
